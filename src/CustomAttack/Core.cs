@@ -29,7 +29,7 @@ namespace MooAPI.CustomAttack
         internal static List<CustomAttack> Skills = [];
         public static IEnumerator Handler(EntityControl entity, int actionid)
         {
-            if (actionid == -555) { yield break; }
+            if (actionid == -555 || entity.tag != "Player") { yield break; }
             while (MainManager.battle.checkingdead != null)
             {
                 yield return null;
@@ -37,7 +37,7 @@ namespace MooAPI.CustomAttack
             var attack = Skills.FirstOrDefault(i => i.id == actionid);
             if (attack is not null)
             {
-                Plugin.Logger.LogInfo($"Running Custom Skill: {attack.name} COST: {attack.cost} ID: {attack.id} ENTITY: {entity}");
+                Plugin.Logger.LogInfo($"Custom Skill: {attack.name} COST: {attack.cost} ID: {attack.id} ENTITY: {entity}");
                 yield return attack.callback(entity, attack);
             }
             else
