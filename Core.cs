@@ -33,6 +33,8 @@ namespace MooAPI
                 }
                 Harmony.PatchAll(typeof(CustomAttack.Patches.RefreshSkills_Patch));
                 Harmony.PatchAll(typeof(CustomAttack.Patches.SetVariables_Patch));
+                Harmony.PatchAll(typeof(CustomMaps.Patches.LoadMap_Patch));
+                //Harmony.PatchAll(typeof(Patches.FPS));
             }
             catch (Exception e)
             {
