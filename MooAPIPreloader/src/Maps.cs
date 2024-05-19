@@ -23,13 +23,11 @@ namespace MooAPI_Patcher
                 try // loads maps.txt from plugin's res (don't really like this way but it works)
                 {
                     var pluginassembly = Assembly.ReflectionOnlyLoadFrom(item);
-                    var mapslist = pluginassembly.GetManifestResourceNames().Where(i => i.EndsWith("maps.txt"));
-                    foreach (var _ in mapslist)
-                    {
-                        using var reader = new StreamReader(pluginassembly.GetManifestResourceStream(_));
-                        Maps.AddRange(reader.ReadToEnd().Split('|').Select(trim => trim.Trim()).Where(i1 => i1.Length >= 1 && !maps_enum.Fields.Any(i2 => i2.Name == i1)));
-                        // maybe i made this too overloaded/complex
-                    }
+                    var mapslist = pluginassembly.GetManifestResourceNames().FirstOrDefault(i => i.EndsWith("maps.txt"));
+                    if (mapslist is null) { continue; }
+                    using var reader = new StreamReader(pluginassembly.GetManifestResourceStream(mapslist));
+                    Maps.AddRange(reader.ReadToEnd().Split('|').Select(trim => trim.Trim()).Where(i1 => i1.Length >= 1 && !maps_enum.Fields.Any(i2 => i2.Name == i1)).Distinct());
+                    // maybe i made this too overloaded/complex
                 }
                 catch (System.Exception) { }
             }
