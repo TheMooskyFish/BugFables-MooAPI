@@ -1,7 +1,8 @@
 # <p align=center> MooAPI For Bug Fables
 ## <p align=center> Proof of Concept/Prototype Edition
-This plugin's code is messy since I am new to designing API-like stuff,
-There are many better ways to do this, but if it works, it works.
+MooAPI is an API used to make custom stuff.<br>
+This mod's code may be messy or make no sense, but this is my practice side project.<br>
+I believe someone will make a better API than me, but until then, this will work fine for me.
 
 ## Current Features
 - [x] Custom Player Skills (Prototype)
