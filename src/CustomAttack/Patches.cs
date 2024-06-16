@@ -80,18 +80,25 @@ namespace MooAPI.CustomAttack
                     new CodeMatch(OpCodes.Ldarg_0),
                     new CodeMatch(OpCodes.Ldnull),
                     new CodeMatch(current)
-                ).Advance(-1).Set(OpCodes.Call, AccessTools.Method(typeof(Core), nameof(Core.Handler))).Advance(-1)
-                .Advance(-1).Set(OpCodes.Nop, null)
-                .Advance(2).InsertAndAdvance(
+                ).Advance(-1).Set(OpCodes.Call, AccessTools.Method(typeof(Core), nameof(Core.Handler)))
+                .Advance(-2).Set(OpCodes.Nop, null)
+                .Advance(2).Insert(
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(entity),
                     new CodeInstruction(OpCodes.Ldarg_0),
                     new CodeInstruction(actionid)
-                )
-                .MatchForward(false,
-                    new CodeMatch(OpCodes.Br)
+                ).MatchForward(true,
+                    new CodeMatch(OpCodes.Ldarg_0),
+                    new CodeMatch(OpCodes.Ldc_I4_M1),
+                    new CodeMatch(OpCodes.Stfld)
                 ).Advance(1);
-                Utils.Nopify(ref codematch, 3);
+                //Plugin.Logger.LogInfo(codematch.Pos);
+                //Plugin.Logger.LogInfo(codematch.Instruction);
+                Utils.Nopify(ref codematch, 2);
+                //foreach (var item in codematch.InstructionsWithOffsets(-35, 20))
+                //{
+                //    Plugin.Logger.LogInfo(item);
+                //}
                 return codematch.InstructionEnumeration();
             }
         }

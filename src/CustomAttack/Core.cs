@@ -29,6 +29,7 @@ namespace MooAPI.CustomAttack
         internal static List<CustomAttack> Skills = [];
         public static IEnumerator Handler(EntityControl entity, int actionid)
         {
+            Plugin.Logger.LogInfo($"id: {actionid} entity: {entity}");
             if (actionid == -555 || entity.tag != "Player") { yield break; }
             while (MainManager.battle.checkingdead != null)
             {
