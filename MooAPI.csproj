@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net35</TargetFramework>
+    <TargetFramework>net46</TargetFramework>
     <AssemblyName>MooAPI</AssemblyName>
     <Company>Moosky's Projects</Company>
     <Description>MooAPI For Bug Fables</Description>
@@ -10,20 +10,12 @@
     <LangVersion>latest</LangVersion>
   </PropertyGroup>
 
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">
-    <DebugType>none</DebugType>
-  </PropertyGroup>
-
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DebugType>none</DebugType>
-  </PropertyGroup>
-
   <ItemGroup>
     <Compile Remove="MooAPIPreloader\**" />
     <EmbeddedResource Remove="MooAPIPreloader\**" />
     <None Remove="MooAPIPreloader\**" />
   </ItemGroup>
-  
+
   <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
@@ -39,11 +31,12 @@
 
   <Target Name="copy" AfterTargets="Build" Condition="exists('$(BUGFABLES)')">
     <Message Text="Copying to $(BUGFABLES)" Importance="High" />
-  	<Copy SourceFiles="bin/$(Configuration)/net35/MooAPI.dll" DestinationFolder="$(BUGFABLES)\BepInEx\plugins" />
+  	<Copy SourceFiles="bin/$(Configuration)/$(TargetFramework)/$(AssemblyName).dll" DestinationFolder="$(BUGFABLES)\BepInEx\plugins" />
+    <Copy SourceFiles="bin/$(Configuration)/$(TargetFramework)/$(AssemblyName).pdb" DestinationFolder="$(BUGFABLES)\BepInEx\plugins" />
   </Target>
 
   <ItemGroup Condition="'$(TargetFramework.TrimEnd(`0123456789`))' == 'net'">
-    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.2" PrivateAssets="all" />
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
   </ItemGroup>
 
 </Project>

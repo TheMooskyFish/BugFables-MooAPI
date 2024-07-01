@@ -18,23 +18,22 @@ namespace MooAPI
         {
             Harmony = new Harmony("dev.mooskyfish.MooAPI");
             Logger = base.Logger;
-            CustomAttackMethod = Config.Bind("Config", "Use New Method for Custom Attacks", true, "");
+            CustomAttackMethod = Config.Bind("Config", "Use Method 3 for Custom Attacks", true, "");
             try
             {
                 if (CustomAttackMethod.Value)
                 {
-                    Logger.LogInfo("Custom Attacks - Using New Method");
-                    Harmony.PatchAll(typeof(CustomAttack.Patches.New_DoAction));
+                    Logger.LogInfo("Custom Attacks - Using Method 3");
+                    Harmony.PatchAll(typeof(CustomAttack.Patches.Method3_DoAction));
                 }
                 else
                 {
-                    Logger.LogInfo("Custom Attacks - Using Old Method");
-                    Harmony.PatchAll(typeof(CustomAttack.Patches.Old_DoAction));
+                    Logger.LogInfo("Custom Attacks - Using Method 1");
+                    Harmony.PatchAll(typeof(CustomAttack.Patches.Method1_DoAction));
                 }
                 Harmony.PatchAll(typeof(CustomAttack.Patches.RefreshSkills_Patch));
                 Harmony.PatchAll(typeof(CustomAttack.Patches.SetVariables_Patch));
                 Harmony.PatchAll(typeof(CustomMaps.Patches.LoadMap_Patch));
-                //Harmony.PatchAll(typeof(Patches.FPS));
             }
             catch (Exception e)
             {

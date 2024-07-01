@@ -1,9 +1,9 @@
-﻿using HarmonyLib;
-using System.Collections;
+﻿using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using HarmonyLib;
 using UnityEngine;
 
 namespace MooAPI.CustomAttack
@@ -16,7 +16,7 @@ namespace MooAPI.CustomAttack
             [HarmonyPostfix]
             static void Patch()
             {
-                Plugin.OG_skilldata = MainManager.skilldata;
+                Plugin.OG_skilldata ??= MainManager.skilldata;
                 Core.RefreshCustomMoves();
             }
         }
@@ -45,7 +45,7 @@ namespace MooAPI.CustomAttack
             }
         }
         [HarmonyPatch(typeof(BattleControl), "DoAction")]
-        public static class Old_DoAction
+        public static class Method1_DoAction
         {
             [HarmonyPostfix]
             static IEnumerator Patch(IEnumerator r, EntityControl entity, int actionid)
@@ -66,7 +66,7 @@ namespace MooAPI.CustomAttack
             }
         }
         [HarmonyPatch(typeof(BattleControl), nameof(BattleControl.DoAction), MethodType.Enumerator)]
-        public static class New_DoAction
+        public static class Method2_DoAction
         {
             [HarmonyTranspiler]
             static IEnumerable<CodeInstruction> Patch(IEnumerable<CodeInstruction> insts, ILGenerator iLGen)
@@ -91,15 +91,31 @@ namespace MooAPI.CustomAttack
                     new CodeMatch(OpCodes.Ldarg_0),
                     new CodeMatch(OpCodes.Ldc_I4_M1),
                     new CodeMatch(OpCodes.Stfld)
-                ).Advance(1);
-                //Plugin.Logger.LogInfo(codematch.Pos);
-                //Plugin.Logger.LogInfo(codematch.Instruction);
-                Utils.Nopify(ref codematch, 2);
-                //foreach (var item in codematch.InstructionsWithOffsets(-35, 20))
-                //{
-                //    Plugin.Logger.LogInfo(item);
-                //}
+                ).Advance(1).Nopify(2);
                 return codematch.InstructionEnumeration();
+            }
+        }
+        [HarmonyPatch(typeof(BattleControl), nameof(BattleControl.DoAction), MethodType.Enumerator)]
+        public static class Method3_DoAction
+        {
+            [HarmonyTranspiler]
+            static IEnumerable<CodeInstruction> Patch(IEnumerable<CodeInstruction> insts, ILGenerator iLGen)
+            {
+                var entity = insts.First(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "entity");
+                var actionid = insts.First(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "actionid");
+                var codematcher = new CodeMatcher(insts, iLGen);
+                codematcher.MatchForward(false,
+                    new CodeMatch(OpCodes.Ldarg_0),
+                    new CodeMatch(i => i.opcode == OpCodes.Ldfld && ((FieldInfo)i.operand).Name == "actionid"),
+                    new CodeMatch(OpCodes.Stloc_S)
+                ).InjectYield(
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(entity),
+                    new CodeInstruction(OpCodes.Ldarg_0),
+                    new CodeInstruction(actionid),
+                    new CodeInstruction(OpCodes.Call, AccessTools.Method(typeof(Core), nameof(Core.Handler)))
+                );
+                return codematcher.InstructionEnumeration();
             }
         }
     }

@@ -29,12 +29,11 @@ namespace MooAPI.CustomAttack
         internal static List<CustomAttack> Skills = [];
         public static IEnumerator Handler(EntityControl entity, int actionid)
         {
-            Plugin.Logger.LogInfo($"id: {actionid} entity: {entity}");
             if (actionid == -555 || entity.tag != "Player") { yield break; }
-            while (MainManager.battle.checkingdead != null)
-            {
-                yield return null;
-            }
+            //while (MainManager.battle.checkingdead != null)
+            //{
+            //    yield return null;
+            //}
             var attack = Skills.FirstOrDefault(i => i.id == actionid);
             if (attack is not null)
             {
@@ -56,7 +55,7 @@ namespace MooAPI.CustomAttack
                 if (tempskilldata[i, 0] is null)
                 {
                     var fields = typeof(CustomAttack).GetFields();
-                    Plugin.Logger.LogInfo($"Adding to SkillData: {fields[0].GetValue(Skills[customindexattack])}");
+                    //Plugin.Logger.LogInfo($"Adding to SkillData: {fields[0].GetValue(Skills[customindexattack])}");
                     for (var i2 = 0; i2 < fields.Length - 2; i2++)
                     {
                         tempskilldata[i, i2] = fields[i2].GetValue(Skills[customindexattack]).ToString();
@@ -67,10 +66,9 @@ namespace MooAPI.CustomAttack
             }
             MainManager.skilldata = tempskilldata;
         }
-        public static bool AddToSkills(CustomAttack attack)
+        public static void AddToSkills(CustomAttack attack)
         {
             Skills.Add(attack);
-            return true;
         }
     }
 }
